@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>College Hostel Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet"/>
+</head>
+<body>
+
+<div class="d-flex vh-100">
+
+    <!-- Sidebar -->
+    <aside class="sidebar d-flex flex-column">
+        <div class="sidebar-brand">
+            <span class="brand-chms">INTI</span>
+        </div>
+        <div class="sidebar-username">
+            <span>{{session["fullname"]}}</span>
+        </div>
+        <nav class="sidebar-nav flex-grow-1">
+            <div class="nav-section-label">Main</div>
+            <a href="/student_dashboard" class="nav-item">Dashboard</a>
+            <a href="/student_due_payment" class="nav-item">Due Payment</a>
+            <a href="/student_announcement" class="nav-item {% if has_unread %}has-badge{% endif %}">Announcement</a>
+
+            <div class="nav-section-label mt-3">Insights</div>
+            <a href="/student_book_room" class="nav-item active">Book a Room</a>
+            <a href="/student_maintenance" class="nav-item">Maintenance</a>
+
+            <div class="nav-section-label mt-3">Account</div>
+            <a href="/student_profile" class="nav-item">Profile</a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-wrapper d-flex flex-column flex-grow-1">
+
+        <!-- Top Bar -->
+        <header class="topbar d-flex align-items-center justify-content-between">
+            <h1 class="page-title">Book a Room</h1>
+            <a href="/user_logout" class="btn btn-logout">Logout</a>
+        </header>
+
+        <!-- Content Area -->
+        <main class="content-area flex-grow-1 p-3">
+            <div class="content-card h-100 d-flex flex-column p-3">
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                {% endfor %}
+                {% endif %}
+                {% endwith %}
+
+                <!-- Booking Form -->
+                <form method="POST" action="/student_book_room" id="bookingForm">
+
+                    <div class="row g-3 align-items-end mb-4">
+
+                        <!-- Start Date -->
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">Start Date <span class="text-danger">*</span></label>
+                            <input type="date" name="start_date" id="startDate" class="form-control auto-submit-field"
+                                   value="{{ form.start_date if form else '' }}"
+                                   min="{{ today }}" required>
+                        </div>
+
+                        <!-- Duration -->
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">Duration (months) <span class="text-danger">*</span></label>
+                            <select name="duration" id="duration" class="form-select auto-submit-field" required>
+                                <option value="" disabled {% if not form or not form.duration %}selected{% endif %}>-- Select --</option>
+                                {% for m in range(1, 13) %}
+                                <option value="{{ m }}" {% if form and form.duration == m|string %}selected{% endif %}>
+                                    {{ m }} month{% if m > 1 %}s{% endif %}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Room -->
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Select Room <span class="text-danger">*</span></label>
+                            <select name="room_id" id="roomSelect" class="form-select auto-submit-field" required>
+                                <option value="" disabled {% if not form or not form.room_id %}selected{% endif %}>
+                                    {% if not form or not form.start_date or not form.duration %}
+                                    -- Pick a date & duration first --
+                                    {% else %}
+                                    -- Select a Room --
+                                    {% endif %}
+                                </option>
+                                {% for room in rooms %}
+                                <option value="{{ room['room_id'] }}"
+                                        {% if room['is_full'] %}disabled{% endif %}
+                                {% if form and form.room_id == room['room_id'] %}selected{% endif %}>
+                                {{ room['room_id'] }} — {{ room['room_type'] | capitalize }}
+                                (RM {{ "%.2f"|format(room['fee_per_month']) }}/month)
+                                {% if room['is_full'] %} [Full]{% endif %}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                    </div>
+                </form>
+
+                <!-- Room Details -->
+                {% if selected_room %}
+                <div class="flex-grow-1 bg-white rounded border">
+                    <div class="p-4">
+                        <h5 class="fw-bold mb-4">Room Details — {{ selected_room['room_id'] }}</h5>
+                        <div class="row g-4">
+
+                            <!-- Layout Picture -->
+                            <div class="col-md-5 d-flex">
+                                <div class="border rounded d-flex align-items-center justify-content-center bg-light w-100 h-100"
+                                     style="min-height: 220px;">
+                                    <img src="{{ url_for('static', filename='rooms/' + selected_room['room_type'] + '.png') }}"
+                                         alt="{{ selected_room['room_type'] | capitalize }} Room Layout"
+                                         class="rounded"
+                                         style="max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain;">
+                                </div>
+                            </div>
+
+                            <!-- Room Info -->
+                            <div class="col-md-7">
+                                <table class="table table-borderless mb-3">
+                                    <tbody>
+                                    <tr>
+                                        <td class="fw-semibold text-muted" style="width:45%">Room ID</td>
+                                        <td>{{ selected_room['room_id'] }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-semibold text-muted">Room Type</td>
+                                        <td>{{ selected_room['room_type'] | capitalize }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-semibold text-muted">Capacity</td>
+                                        <td>{{ selected_room['capacity'] }} person(s)</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-semibold text-muted">Occupancy During Your Stay</td>
+                                        <td>
+                                            {{ selected_room['occupancy'] }} / {{ selected_room['capacity'] }}
+                                            {% if selected_room['is_full'] %}
+                                            <span class="badge bg-danger ms-2">Full</span>
+                                            {% else %}
+                                            <span class="badge bg-success ms-2">Available</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-semibold text-muted">Fee per Month</td>
+                                        <td>RM {{ "%.2f"|format(selected_room['fee_per_month']) }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-semibold text-muted">Total Fee</td>
+                                        <td class="fw-bold">RM {{ "%.2f"|format(total_fee) }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-semibold text-muted">Booking Period</td>
+                                        <td>{{ form.start_date }} → {{ end_date }}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+
+                                {% if not selected_room['is_full'] %}
+                                <form method="POST" action="/student_book_room_confirm">
+                                    <input type="hidden" name="room_id" value="{{ selected_room['room_id'] }}">
+                                    <input type="hidden" name="start_date" value="{{ form.start_date }}">
+                                    <input type="hidden" name="duration" value="{{ form.duration }}">
+                                    <input type="hidden" name="end_date" value="{{ end_date }}">
+                                    <button type="submit" class="btn btn-dark">Confirm Booking</button>
+                                </form>
+                                {% else %}
+                                <button class="btn btn-secondary" disabled>Room Fully Occupied During This Period</button>
+                                {% endif %}
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                {% else %}
+                <!-- Placeholder -->
+                <div class="flex-grow-1 bg-white rounded border d-flex align-items-center justify-content-center">
+                    <div class="text-center text-muted">
+                        <p class="mb-0">Select a start date, duration, and room above to view details.</p>
+                    </div>
+                </div>
+                {% endif %}
+
+            </div>
+        </main>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.querySelectorAll('.auto-submit-field').forEach(el =>
+        el.addEventListener('change', () => document.getElementById('bookingForm').submit())
+    );
+</script>
+</body>
+</html>

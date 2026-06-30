@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>College Hostel Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet"/>
+</head>
+<body>
+
+<div class="d-flex vh-100">
+
+    <!-- Sidebar -->
+    <aside class="sidebar d-flex flex-column">
+        <div class="sidebar-brand">
+            <span class="brand-chms">INTI</span>
+        </div>
+        <div class="sidebar-username">
+            <span>{{session["fullname"]}}</span>
+        </div>
+        <nav class="sidebar-nav flex-grow-1">
+            <div class="nav-section-label">Main</div>
+            <a href="/student_dashboard" class="nav-item ">Dashboard</a>
+            <a href="/student_due_payment" class="nav-item active">Due Payment</a>
+            <a href="/student_announcement" class="nav-item {% if has_unread %}has-badge{% endif %}">Announcement</a>
+
+            <div class="nav-section-label mt-3">Insights</div>
+            <a href="/student_book_room" class="nav-item">Book a Room</a>
+            <a href="/student_maintenance" class="nav-item">Maintenance</a>
+
+            <div class="nav-section-label mt-3">Account</div>
+            <a href="/student_profile" class="nav-item">Profile</a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-wrapper d-flex flex-column flex-grow-1">
+
+        <!-- Top Bar -->
+        <header class="topbar d-flex align-items-center justify-content-between">
+            <h1 class="page-title">Due Payment</h1>
+            <a href="/user_logout" class="btn btn-logout">Logout</a>
+        </header>
+
+        <!-- Content Area -->
+        <main class="content-area flex-grow-1 p-3">
+            <div class="content-card h-100 d-flex flex-column p-3 overflow-y-auto">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                {% endfor %}
+                {% endif %}
+                {% endwith %}
+
+                <div class="row justify-content-center flex-grow-1">
+                    <div class="col-md-7 col-lg-5">
+                        <div class="panel-white">
+
+                            <h2 class="stat-card-title">{{ ewallet_name }}</h2>
+                            <p class="text-center text-muted small mb-3">Secure E-wallet Payment Portal</p>
+
+                            <div class="stat-row">
+                                <span>Amount to Pay</span>
+                                <span class="stat-value">RM {{ total_amount }}</span>
+                            </div>
+
+                            <p class="text-center fw-bold mt-3 mb-2">Scan the DuitNow QR code below to pay:</p>
+                            <div class="d-flex justify-content-center mb-3">
+                                <img src="{{ url_for('static', filename='duitnow_qr.png') }}"
+                                     alt="DuitNow QR Code" width="200" height="200">
+                            </div>
+
+                            <form method="POST" action="/student_due_payment_method_ewallet_portal">
+                                <p class="text-center small text-muted mb-3">After scanning and paying, click the button below to confirm.</p>
+
+                                <div class="d-flex gap-2">
+                                    <a href="/student_due_payment_method_ewallet" class="btn-logout flex-fill text-center">Cancel</a>
+                                    <button type="submit" class="btn btn-dark rounded-pill flex-fill">I Have Paid</button>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

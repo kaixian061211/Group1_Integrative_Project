@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>College Hostel Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet"/>
+</head>
+<body>
+
+  <div class="d-flex vh-100">
+
+        <!-- Sidebar -->
+      <aside class="sidebar d-flex flex-column">
+          <!-- Brand -->
+          <div class="sidebar-brand">
+              <span class="brand-chms">INTI</span>
+          </div>
+
+          <!-- Username -->
+          <div class="sidebar-username">
+              <span>{{session["fullname"]}}</span>
+          </div>
+
+          <!-- Nav -->
+          <nav class="sidebar-nav flex-grow-1">
+              <div class="nav-section-label">Main</div>
+              <a href="/admin_dashboard" class="nav-item">Dashboard</a>
+              <a href="/admin_user_list_application" class="nav-item active">User List</a>
+              <a href="/admin_room" class="nav-item">Room</a>
+
+              <div class="nav-section-label mt-3">Insights</div>
+              <a href="/admin_analytics_date" class="nav-item ">Analytics</a>
+              <a href="/admin_due_payment" class="nav-item">Due Payment</a>
+              <a href="/admin_announcement_page" class="nav-item">Announcement</a>
+
+              <div class="nav-section-label mt-3">Account</div>
+              <a href="/admin_profile" class="nav-item">Profile</a>
+          </nav>
+      </aside>
+
+    <!-- Main Content -->
+    <div class="main-wrapper d-flex flex-column flex-grow-1">
+
+      <!-- Top Bar -->
+      <header class="topbar d-flex align-items-center justify-content-between">
+        <h1 class="page-title">User List</h1>
+        <a href="/user_logout" class="btn btn-logout">Logout</a>
+      </header>
+
+      <!-- Content Area -->
+        <main class="content-area flex-grow-1 p-3">
+            <div class="content-card h-100 d-flex flex-column p-3 overflow-y-auto">
+                <div class="flex-grow-1 bg-white rounded p-3">
+                    {% if row %}
+
+                    <!-- Flash messages -->
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                    {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+                    {% endwith %}
+
+                    <form method="POST" action="/admin_user_list_student_edit">
+                        <input type="hidden" name="student_id" value="{{ row['student_id'] }}">
+
+                        <table class="table table-bordered">
+                            <tr>
+                                <th style="width: 150px;">Student ID</th>
+                                <td>{{ row['student_id'] }}</td>  <!-- read-only, not editable -->
+                            </tr>
+                            <tr>
+                                <th>Full Name</th>
+                                <td>
+                                    <input type="text" name="fullname" class="form-control"
+                                           value="{{ row['fullname'] }}" required>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Email</th>
+                                <td>
+                                    <input type="text" name="email" class="form-control"
+                                           value="{{ row['email'] }}" required>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Gender</th>
+                                <td>
+                                    <select name="gender" class="form-select">
+                                        <option value="M" {% if row['gender'] == 'M' %}selected{% endif %}>M</option>
+                                        <option value="F" {% if row['gender'] == 'F' %}selected{% endif %}>F</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Phone</th>
+                                <td>
+                                    <input type="number" name="phone" class="form-control"
+                                           value="{{ row['phone'] }}" required>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                            <a href="/admin_user_list_student" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+
+                    {% else %}
+                    <p class="text-center">Student not found.</p>
+                    <a href="/admin_user_list_student" class="btn btn-secondary">Back</a>
+                    {% endif %}
+                </div>
+            </div>
+        </main>
+
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

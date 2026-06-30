@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>College Hostel Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet"/>
+</head>
+<body>
+
+<div class="d-flex vh-100">
+
+    <!-- Sidebar -->
+    <aside class="sidebar d-flex flex-column">
+        <div class="sidebar-brand">
+            <span class="brand-chms">INTI</span>
+        </div>
+        <div class="sidebar-username">
+            <span>{{session["fullname"]}}</span>
+        </div>
+        <nav class="sidebar-nav flex-grow-1">
+            <div class="nav-section-label">Main</div>
+            <a href="/student_dashboard" class="nav-item ">Dashboard</a>
+            <a href="/student_due_payment" class="nav-item active">Due Payment</a>
+            <a href="/student_announcement" class="nav-item {% if has_unread %}has-badge{% endif %}">Announcement</a>
+
+            <div class="nav-section-label mt-3">Insights</div>
+            <a href="/student_book_room" class="nav-item">Book a Room</a>
+            <a href="/student_maintenance" class="nav-item">Maintenance</a>
+
+            <div class="nav-section-label mt-3">Account</div>
+            <a href="/student_profile" class="nav-item">Profile</a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-wrapper d-flex flex-column flex-grow-1">
+
+        <!-- Top Bar -->
+        <header class="topbar d-flex align-items-center justify-content-between">
+            <h1 class="page-title">Due Payment</h1>
+            <a href="/user_logout" class="btn btn-logout">Logout</a>
+        </header>
+
+        <!-- Content Area -->
+        <main class="content-area flex-grow-1 p-3">
+            <div class="content-card h-100 d-flex flex-column p-3 overflow-y-auto ">
+                {% if selected_fines %}
+                <h3 style="color:#fff;">Fine Fees</h3>
+                <table class="table table-bordered table-striped">
+                    <thead class="table-dark">
+                    <tr>
+                        <th>Fine ID</th>
+                        <th>Reason</th>
+                        <th>Amount</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for fine in selected_fines %}
+                    <tr>
+                        <td>{{ fine['fine_id'] }}</td>
+                        <td>{{ fine['reason'] }}</td>
+                        <td>RM {{ fine['amount'] }}</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                {% endif %}
+
+                {% if selected_rentals %}
+                <h3 style="color:#fff;">Rental Fees</h3>
+                <table class="table table-bordered table-striped">
+                    <thead class="table-dark">
+                    <tr>
+                        <th>Rental ID</th>
+                        <th>Amount</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for rental in selected_rentals %}
+                    <tr>
+                        <td>{{ rental['rental_id'] }}</td>
+                        <td>RM {{ rental['amount'] }}</td>
+                        <td>{{ rental['start_date'] }}</td>
+                        <td>{{ rental['end_date'] }}</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                {% endif %}
+
+                {% if selected_late_payments %}
+                <h3 style="color:#fff;">Overdue Rental + Late Payment Fee</h3>
+                <table class="table table-bordered table-striped">
+                    <thead class="table-dark">
+                    <tr>
+                        <th>Rental ID</th>
+                        <th>Rental Amount</th>
+                        <th>Late Fee</th>
+                        <th>Subtotal</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for lp in selected_late_payments %}
+                    <tr>
+                        <td>{{ lp['rental_id'] }}</td>
+                        <td>RM {{ lp['rental_amount'] }}</td>
+                        <td>RM {{ lp['amount'] }}</td>
+                        <td>RM {{ lp['rental_amount'] + lp['amount'] }}</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                {% endif %}
+
+                <h3 style="color:#fff;">Total Amount: RM {{ total_amount }}</h3>
+
+                <a href="/student_due_payment_method" class="btn btn-sm btn-success" style="font-size: 1.1rem;">Proceed to Payment</a>
+                <a href="/student_due_payment" class="btn btn-sm btn-danger" style="font-size: 1.1rem;">Back</a>
+
+            </div>
+        </main>
+
+    </div>
+</div>
+</body>
+</html>

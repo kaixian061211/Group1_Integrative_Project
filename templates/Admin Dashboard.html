@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>College Hostel Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet"/>
+</head>
+<body>
+
+<div class="d-flex vh-100">
+
+    <!-- Sidebar -->
+    <aside class="sidebar d-flex flex-column">
+        <div class="sidebar-brand">
+            <span class="brand-chms">INTI</span>
+        </div>
+        <div class="sidebar-username">
+            <span>{{session["fullname"]}}</span>
+        </div>
+        <nav class="sidebar-nav flex-grow-1">
+            <div class="nav-section-label">Main</div>
+            <a href="/admin_dashboard" class="nav-item active">Dashboard</a>
+            <a href="/admin_user_list_application" class="nav-item">User List</a>
+            <a href="/admin_room" class="nav-item">Room</a>
+
+            <div class="nav-section-label mt-3">Insights</div>
+            <a href="/admin_analytics_date" class="nav-item">Analytics</a>
+            <a href="/admin_due_payment" class="nav-item">Due Payment</a>
+            <a href="/admin_announcement_page" class="nav-item">Announcement</a>
+
+            <div class="nav-section-label mt-3">Account</div>
+            <a href="/admin_profile" class="nav-item">Profile</a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-wrapper d-flex flex-column flex-grow-1">
+
+        <!-- Top Bar -->
+        <header class="topbar d-flex align-items-center justify-content-between">
+            <h1 class="page-title">Dashboard</h1>
+            <a href="/user_logout" class="btn btn-logout">Logout</a>
+        </header>
+
+        <!-- Content Area -->
+        <main class="content-area flex-grow-1 p-3">
+            <div class="content-card h-100 d-flex flex-column p-3">
+
+                <div class="d-flex gap-3 flex-grow-1">
+
+                    <!-- Application Card -->
+                    <div class="panel-white">
+                        <h6 class="stat-card-title">Application</h6>
+                        <div class="stat-row">Total Application <span class="stat-value">{{ total_application }}</span></div>
+                        <div class="stat-row">Pending Application <span class="stat-value">{{ pending_application }}</span></div>
+                        <div class="stat-row">Approved Application <span class="stat-value">{{ approved_application }}</span></div>
+                        <div class="stat-row">Rejected Application <span class="stat-value">{{ rejected_application }}</span></div>
+                        <div class="mt-auto pt-3">
+                            <a href="/admin_user_list_application" class="btn btn-logout w-100">Manage</a>
+                        </div>
+                    </div>
+
+                    <!-- Room Card -->
+                    <div class="panel-white">
+                        <h6 class="stat-card-title">Room</h6>
+                        <div class="stat-row">Total Room <span class="stat-value">{{total_room}}</span></div>
+                        <div class="stat-row">Available Room <span class="stat-value">{{available_room}}</span></div>
+                        <div class="stat-row">Occupied Room <span class="stat-value">{{occupied_room}}</span></div>
+                        <div class="mt-auto pt-3">
+                            <a href="/admin_room" class="btn btn-logout w-100">Manage</a>
+                        </div>
+                    </div>
+
+                    <!-- Analytic Card -->
+                    <div class="panel-white">
+                        <h6 class="stat-card-title">Analytic</h6>
+                        <div class="stat-row">Total Students <span class="stat-value">{{total_students}}</span></div>
+                        <div class="stat-row">Total Maintenance <span class="stat-value">{{total_maintenance}}</span></div>
+                        <div class="stat-row">Total Due Payment <span class="stat-value">{{total_due_payment}}</span></div>
+                        <div class="stat-row">Total Revenue <span class="stat-value">{{total_revenue}}</span></div>
+                        <div class="mt-auto pt-3">
+                            <a href="/admin_analytics_date" class="btn btn-logout w-100">View</a>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </main>
+
+    </div>
+</div>
+</body>
+</html>

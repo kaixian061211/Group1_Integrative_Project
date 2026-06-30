@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>College Hostel Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet"/>
+</head>
+<body>
+
+<div class="d-flex vh-100">
+
+    <!-- Sidebar -->
+    <aside class="sidebar d-flex flex-column">
+        <div class="sidebar-brand">
+            <span class="brand-chms">INTI</span>
+        </div>
+        <div class="sidebar-username">
+            <span>{{session["fullname"]}}</span>
+        </div>
+        <nav class="sidebar-nav flex-grow-1">
+            <div class="nav-section-label">Main</div>
+            <a href="/student_dashboard" class="nav-item ">Dashboard</a>
+            <a href="/student_due_payment" class="nav-item active">Due Payment</a>
+            <a href="/student_announcement" class="nav-item {% if has_unread %}has-badge{% endif %}">Announcement</a>
+
+            <div class="nav-section-label mt-3">Insights</div>
+            <a href="/student_book_room" class="nav-item">Book a Room</a>
+            <a href="/student_maintenance" class="nav-item">Maintenance</a>
+
+            <div class="nav-section-label mt-3">Account</div>
+            <a href="/student_profile" class="nav-item">Profile</a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-wrapper d-flex flex-column flex-grow-1">
+
+        <!-- Top Bar -->
+        <header class="topbar d-flex align-items-center justify-content-between">
+            <h1 class="page-title">Due Payment</h1>
+            <a href="/user_logout" class="btn btn-logout">Logout</a>
+        </header>
+
+        <!-- Content Area -->
+        <main class="content-area flex-grow-1 p-3">
+            <div class="content-card h-100 d-flex flex-column p-3 overflow-y-auto ">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                {% endfor %}
+                {% endif %}
+                {% endwith %}
+                <div class="d-flex gap-2 mb-3">
+                    <a href="/student_due_payment" class="btn btn-light">Fine Fees</a>
+                    <a href="/student_due_payment_rental" class="btn btn-light active">Rental Bills</a>
+                    <form method="GET" action="/student_due_payment_rental" class="d-flex gap-2  ms-auto d-block">
+                        <label class="form-label fw-semibold" style="color: #fff;">Month</label>
+                        <select name="month" class="form-select">
+                            <option value="">-- All --</option>
+                            <option value="01" {% if month == '01' %}selected{% endif %}>January</option>
+                            <option value="02" {% if month == '02' %}selected{% endif %}>February</option>
+                            <option value="03" {% if month == '03' %}selected{% endif %}>March</option>
+                            <option value="04" {% if month == '04' %}selected{% endif %}>April</option>
+                            <option value="05" {% if month == '05' %}selected{% endif %}>May</option>
+                            <option value="06" {% if month == '06' %}selected{% endif %}>June</option>
+                            <option value="07" {% if month == '07' %}selected{% endif %}>July</option>
+                            <option value="08" {% if month == '08' %}selected{% endif %}>August</option>
+                            <option value="09" {% if month == '09' %}selected{% endif %}>September</option>
+                            <option value="10" {% if month == '10' %}selected{% endif %}>October</option>
+                            <option value="11" {% if month == '11' %}selected{% endif %}>November</option>
+                            <option value="12" {% if month == '12' %}selected{% endif %}>December</option>
+                        </select>
+
+                        <label class="form-label fw-semibold" style="color: #fff;">Year</label>
+                        <select name="year" class="form-select">
+                            <option value="">-- All --</option>
+                            <option value="2024" {% if year == '2024' %}selected{% endif %}>2024</option>
+                            <option value="2025" {% if year == '2025' %}selected{% endif %}>2025</option>
+                            <option value="2026" {% if year == '2026' %}selected{% endif %}>2026</option>
+                        </select>
+
+                        <label class="form-label fw-semibold" style="color: #fff;">Status</label>
+                        <select name="status" class="form-select">
+                            <option value="">-- All --</option>
+                            <option value="unpaid" {% if status == 'unpaid' %}selected{% endif %}>Unpaid</option>
+                            <option value="paid" {% if status == 'paid' %}selected{% endif %}>Paid</option>
+                        </select>
+
+                        <button type="submit" class = "btn btn-primary">Filter</button>
+                        <a href="/student_due_payment_rental" class = "btn btn-secondary">Reset</a>
+                    </form>
+                </div>
+
+                <details style = "color:#fff;">
+                    <summary><b>How is the late fine calculated? (click to expand)</b></summary>
+                    <br>
+                    <table class="table table-bordered table-striped">
+                        <thead class="table-dark">
+                        <tr>
+                            <th>Tier</th>
+                            <th>Days Late</th>
+                            <th>Rate</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr><td>Tier 1</td><td>1 – 7 days</td><td>RM 10.00 flat</td></tr>
+                        <tr><td>Tier 2</td><td>8 – 14 days</td><td>RM 2.00 per day</td></tr>
+                        <tr><td>Tier 3</td><td>15 – 30 days</td><td>RM 5.00 per day</td></tr>
+                        <tr><td>Tier 4</td><td>31 days and above</td><td>RM 10.00 per day (no cap)</td></tr>
+                        </tbody>
+                    </table>
+                </details>
+
+                {% if late_summary['total_days_late'] > 0 %}
+                <div style="border:3px solid red; padding:10px; background:#fff5f5; margin-bottom:16px;">
+                    <b>Late Payment Summary</b>
+                    <p>You have a total of <b>{{ late_summary['total_days_late'] }} overdue day(s)</b> across your unpaid rentals.</p>
+                    <table class="table table-bordered table-striped">
+                        <thead class="table-dark">
+                        <tr>
+                            <th>Rental ID</th>
+                            <th>Due Date</th>
+                            <th>Days Late</th>
+                            <th>Late Fine</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for item in late_summary['breakdown'] %}
+                        <tr>
+                            <td>{{ item['rental_id'] }}</td>
+                            <td>{{ item['due_date'] }}</td>
+                            <td>{{ item['days_late'] }} day(s)</td>
+                            <td>RM {{ "%.2f"|format(item['late_fine']) }}</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% endif %}
+
+                <div class ="flex-grow-1 bg-white rounded">
+                    <div style="padding: 10px;">
+                        <form method="POST" action="/student_due_payment_summary">
+                        <table class="table table-bordered table-striped">
+                            <thead class="table-dark">
+                            <tr>
+                                <th>Rental ID</th>
+                                <th>Amount</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Status</th>
+                                <th>Late Payment Fine</th>
+                                <th>Action</th>
+                                <th>Select</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for rental in rentals %}
+                            {% set lp = late_payment_map.get(rental['rental_id']) %}
+                            {% set has_unpaid_late_fee = lp and lp['payment_id'] is none %}
+                            <tr>
+                                <td>{{ rental['rental_id'] }}</td>
+                                <td>RM {{ rental['amount'] }}</td>
+                                <td>{{ rental['start_date'] }}</td>
+                                <td>{{ rental['end_date'] }}</td>
+                                <td>
+                                    {% if rental['payment_id'] is not none %}
+                                    <span style="color:green">Paid</span>
+                                    {% else %}
+                                    <span style="color:red">Unpaid</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if lp %}
+                                    {% if has_unpaid_late_fee %}
+                                    RM {{ lp['amount'] }} (must be paid together with rental)
+                                    {% else %}
+                                    <span style="color:green">Paid</span> RM {{ lp['amount'] }}
+                                    {% endif %}
+                                    {% else %}
+                                    -
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if rental['payment_id'] is not none %}
+                                    <a href="/download_receipt/{{ rental['payment_id'] }}" class = "btn btn-sm btn-success">
+                                        Download Receipt
+                                    </a>
+                                    {% else %}
+                                    <button type="submit" class = "btn btn-sm btn-success" >Pay</button>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if rental['payment_id'] is none %}
+                                        {% if has_unpaid_late_fee %}
+                                        <input class="checkbox" type="checkbox" name="late_payment_ids" value="{{ lp['late_payment_id'] }}">
+                                        {% else %}
+                                        <input class="checkbox" type="checkbox" name="rental_ids" value="{{ rental['rental_id'] }}">
+                                        {% endif %}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="8" class="text-center">No rental bills found</td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

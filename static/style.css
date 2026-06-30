@@ -1,0 +1,367 @@
+/* ── CSS Variables ───────────────────────── */
+:root {
+  --sidebar-bg: #f9d6d6;
+  --sidebar-width: 220px;
+  --topbar-bg: #5a0000;
+  --main-bg: #6b1a1a;
+  --brand-color: #3b0000;
+  --nav-label-color: #a07070;
+  --nav-item-color: #3b0000;
+  --nav-active-bg: rgba(180, 100, 100, 0.35);
+  --content-card-bg: rgba(160, 80, 80, 0.45);
+  --logout-bg: #fce8e8;
+  --logout-color: #3b0000;
+}
+
+/* ── Reset / Base ────────────────────────── */
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: var(--main-bg);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Sidebar ─────────────────────────────── */
+.sidebar {
+  width: var(--sidebar-width);
+  min-width: var(--sidebar-width);
+  background: var(--sidebar-bg);
+  border-right: 2px solid #c9a0a0;
+}
+
+.sidebar-brand {
+  background: var(--topbar-bg);
+  padding: 20px 20px;
+}
+
+.brand-chms {
+  font-size: 1.7rem;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: 1px;
+}
+
+.sidebar-username {
+  padding: 14px 20px;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--nav-item-color);
+  border-bottom: 2px solid #c9a0a0;
+}
+
+/* ── Nav ─────────────────────────────────── */
+.sidebar-nav {
+  padding: 16px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nav-section-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--nav-label-color);
+  text-transform: none;
+  padding: 4px 8px 2px;
+}
+
+.nav-item {
+  position: relative;
+  display: block;
+  padding: 8px 14px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--nav-item-color);
+  text-decoration: none;
+  border-radius: 10px;
+  transition: background 0.15s;
+}
+
+.nav-item:hover {
+  background: rgba(180, 100, 100, 0.2);
+  color: var(--nav-item-color);
+}
+
+.nav-item.active {
+  background: var(--nav-active-bg);
+  color: var(--nav-item-color);
+}
+
+/* ── Notification Badge ───────────────────── */
+.nav-item.has-badge::after {
+  content: '';
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  width: 15px;
+  height: 15px;
+  background-color: #e53535;
+  border-radius: 50%;
+  border: 2px solid var(--sidebar-bg);
+}
+
+/* ── Main Wrapper ────────────────────────── */
+.main-wrapper {
+  background: var(--main-bg);
+}
+
+/* ── Topbar ──────────────────────────────── */
+.topbar {
+  background: var(--topbar-bg);
+  padding: 14px 28px;
+}
+
+.page-title {
+  color: #fff;
+  font-size: 2rem;
+  font-weight: 900;
+  margin: 0;
+}
+
+.btn-logout {
+  background: var(--logout-bg);
+  color: var(--logout-color);
+  font-weight: 700;
+  font-size: 1rem;
+  border: none;
+  border-radius: 50px;
+  padding: 8px 28px;
+}
+
+.btn-logout:hover {
+  background: #fcd0d0;
+  color: var(--logout-color);
+}
+
+/* ── Content Card ────────────────────────── */
+.content-area {
+  padding: 16px !important;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.content-card {
+  background: var(--content-card-bg);
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(4px);
+  min-height: 100%;
+  overflow-y: auto;
+  overflow-x: auto;
+}
+
+/* ── Shared White Panel ───────────────────── */
+.panel-white {
+  background: #fff;
+  border-radius: 10px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+/* ── Stat Card ───────────────────────────── */
+.stat-card-title {
+  font-weight: 800;
+  text-align: center;
+  color: var(--topbar-bg);
+  padding-bottom: 10px;
+  margin-bottom: 12px;
+  border-bottom: 2px solid #f0e0e0;
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 7px 0;
+  border-bottom: 1px solid #f9eded;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--nav-label-color);
+}
+
+.stat-row:last-of-type {
+  border-bottom: none;
+}
+
+.stat-value {
+  font-weight: 800;
+  color: var(--brand-color);
+}
+
+/* ── Profile ─────────────────────────────── */
+.profile-tile {
+  background: rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+
+.profile-tile-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: rgba(255,220,220,0.7);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  margin: 0 0 4px;
+}
+
+.profile-tile-value {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+}
+
+/* ── Avatar ──────────────────────────────── */
+.avatar-initials {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  border: 3px solid rgba(255,255,255,0.3);
+  background: var(--topbar-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: #fff;
+}
+
+/* ── Login / Landing Page ─────────────────── */
+.landing-nav {
+  padding: 18px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.landing-nav-links {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 50px;
+  padding: 8px 24px;
+  display: flex;
+  gap: 28px;
+}
+
+.landing-nav-links a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: opacity 0.15s;
+}
+
+.landing-nav-links a:hover { opacity: 0.75; }
+
+.landing-body {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.login-form-panel {
+  flex: 1;
+  padding: 60px 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+}
+
+.login-input {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.5);
+  border-radius: 0;
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 500;
+  padding: 12px 0;
+  margin-bottom: 28px;
+  outline: none;
+  width: 100%;
+}
+
+.login-input option {
+  color: #000;
+  background-color: #fff;
+}
+
+.login-input::placeholder { color: rgba(255, 220, 220, 0.7); }
+
+.login-input:focus {
+  border-bottom-color: #fff;
+  background: transparent;
+  color: #fff;
+  box-shadow: none;
+}
+
+.login-register {
+  margin-top: 14px;
+  font-size: 0.85rem;
+  color: rgba(255, 220, 220, 0.85);
+  font-weight: 600;
+}
+
+.login-register a { color: #fff; font-weight: 800; text-decoration: none; }
+.login-register a:hover { text-decoration: underline; }
+
+.login-image-panel {
+  width: 70%;
+  flex-shrink: 0;
+  overflow: hidden;
+  border-radius: 0 18px 18px 0;
+}
+
+.login-image-panel img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ── Tables ──────────────────────────────── */
+.table {
+  table-layout: auto;
+}
+
+.table th,
+.table td {
+  white-space: normal;
+  word-wrap: break-word;
+  word-break: break-word;
+  max-width: 250px;
+  vertical-align: middle;
+}
+
+.table td .d-flex.gap-2 {
+  flex-wrap: nowrap;
+}
+
+.table td .d-flex.gap-2 .form-select {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.table td .d-flex.gap-2 button {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.table td:last-child {
+  max-width: none;
+  white-space: nowrap;
+}
+
+.checkbox {
+    width: 18px;
+    height: 18px;
+    accent-color: #2563eb; /* checked color */
+    cursor: pointer;
+    vertical-align: middle;
+}
+
