@@ -688,6 +688,9 @@ def user_logout():
 
 @app.route("/admin_dashboard")
 def admin_dashboard():
+    if session.get('user_id') is None or session.get('role') != 'admin':
+        return redirect('/user_login')
+    
     conn = get_db()
     total_application = conn.execute("""
         SELECT COUNT(*)
@@ -767,6 +770,9 @@ def admin_dashboard():
 
 @app.route("/admin_user_list_application")
 def admin_user_list_application():
+    if session.get('user_id') is None or session.get('role') != 'admin':
+        return redirect('/user_login')
+    
     conn = get_db()
 
     table_data = conn.execute("""
@@ -783,7 +789,7 @@ def admin_user_list_application():
 # ==========================
 @app.route("/admin_user_list_application_approve")
 def admin_user_list_application_approve():
-    if 'email' not in session or session['role'] != 'admin':
+    if session.get('user_id') is None or session.get('role') != 'admin':
         return redirect('/user_login')
 
     application_id = request.args.get("application_id","")
@@ -828,7 +834,7 @@ def admin_user_list_application_approve():
 # ==========================
 @app.route('/admin_user_list_application_reject')
 def admin_user_list_application_reject():
-    if 'email' not in session or session['role'] != 'admin':
+    if session.get('user_id') is None or session.get('role') != 'admin':
         return redirect('/user_login')
 
     application_id = request.args.get("application_id","")
@@ -855,6 +861,9 @@ def admin_user_list_application_reject():
 
 @app.route("/admin_user_list_staff")
 def admin_user_list_staff():
+    if session.get('user_id') is None or session.get('role') != 'admin':
+        return redirect('/user_login')
+    
     conn = get_db()
     table_data = conn.execute("""
             SELECT *
@@ -866,6 +875,9 @@ def admin_user_list_staff():
 
 @app.route("/admin_user_list_staff_add", methods=["GET", "POST"])
 def admin_user_list_staff_add():
+    if session.get('user_id') is None or session.get('role') != 'admin':
+        return redirect('/user_login')
+    
     conn = get_db()
 
     if request.method == "POST":
@@ -895,6 +907,9 @@ def admin_user_list_staff_add():
 
 @app.route("/admin_user_list_student")
 def admin_user_list_student():
+    if session.get('user_id') is None or session.get('role') != 'admin':
+        return redirect('/user_login')
+    
     conn = get_db()
     search_data = request.args.get("search_data", "")
 
@@ -915,6 +930,9 @@ def admin_user_list_student():
 
 @app.route("/admin_user_list_student_edit",methods=["GET", "POST"])
 def admin_user_list_student_edit():
+    if session.get('user_id') is None or session.get('role') != 'admin':
+        return redirect('/user_login')
+    
     conn = get_db()
 
     if request.method == "POST":
@@ -952,6 +970,9 @@ def admin_user_list_student_edit():
 
 @app.route("/admin_room")
 def admin_room():
+    if session.get('user_id') is None or session.get('role') != 'admin':
+        return redirect('/user_login')
+    
     conn = get_db()
     search_room = request.args.get("search_room", "")
 
@@ -972,6 +993,9 @@ def admin_room():
 
 @app.route("/admin_room_edit", methods=["GET", "POST"])
 def admin_room_edit():
+    if session.get('user_id') is None or session.get('role') != 'admin':
+        return redirect('/user_login')
+    
     conn = get_db()
 
     if request.method == "POST":
@@ -1008,6 +1032,9 @@ def admin_room_edit():
 
 @app.route("/admin_room_delete", methods=["POST"])
 def admin_room_delete():
+    if session.get('user_id') is None or session.get('role') != 'admin':
+        return redirect('/user_login')
+    
     room_id = request.form.get("room_id", "")
     conn = get_db()
     try:
@@ -1022,6 +1049,9 @@ def admin_room_delete():
 
 @app.route("/admin_room_add", methods=["GET", "POST"])
 def admin_room_add():
+    if session.get('user_id') is None or session.get('role') != 'admin':
+        return redirect('/user_login')
+    
     conn = get_db()
 
     if request.method == "POST":
@@ -1050,6 +1080,9 @@ def admin_room_add():
 
 @app.route("/admin_analytics_date", methods=["GET","POST"])
 def admin_analytics_date():
+    if session.get('user_id') is None or session.get('role') != 'admin':
+        return redirect('/user_login')
+    
     if request.method == "POST":
         session["start_date"] = request.form["start_date"]
         session["end_date"] = request.form["end_date"]
@@ -1060,6 +1093,9 @@ def admin_analytics_date():
 
 @app.route("/admin_analytics_application_form")
 def admin_analytics_application_form():
+    if session.get('user_id') is None or session.get('role') != 'admin':
+        return redirect('/user_login')
+    
     start_date = session.get("start_date", "")
     end_date = session.get("end_date", "")
 
@@ -1095,6 +1131,9 @@ def admin_analytics_application_form():
 
 @app.route("/admin_analytics_maintenance_request")
 def admin_analytics_maintenance_request():
+    if session.get('user_id') is None or session.get('role') != 'admin':
+        return redirect('/user_login')
+    
     start_date = session.get("start_date", "")
     end_date = session.get("end_date", "")
 
@@ -1130,6 +1169,9 @@ def admin_analytics_maintenance_request():
 
 @app.route("/admin_analytics_revenue")
 def admin_analytics_revenue():
+    if session.get('user_id') is None or session.get('role') != 'admin':
+        return redirect('/user_login')
+    
     start_date = session.get("start_date", "")
     end_date = session.get("end_date", "")
 
@@ -1172,6 +1214,9 @@ def admin_analytics_revenue():
 
 @app.route("/new_date")
 def new_date():
+    if session.get('user_id') is None or session.get('role') != 'admin':
+        return redirect('/user_login')
+    
     session.pop("start_date", None)
     session.pop("end_date", None)
     return redirect("/")
@@ -1179,6 +1224,9 @@ def new_date():
 
 @app.route("/admin_due_payment")
 def admin_due_payment():
+    if session.get('user_id') is None or session.get('role') != 'admin':
+        return redirect('/user_login')
+    
     conn = get_db()
     search_data = request.args.get("search_data","")
 
@@ -1219,6 +1267,9 @@ def admin_due_payment():
 
 @app.route("/admin_announcement_page")
 def admin_announcement_page():
+    if session.get('user_id') is None or session.get('role') != 'admin':
+        return redirect('/user_login') 
+    
     conn = get_db()
 
     search_date = request.args.get("search_date", "")
@@ -1253,6 +1304,9 @@ def admin_announcement_page():
 
 @app.route("/admin_announcement_add", methods=["GET", "POST"])
 def admin_announcement_add():
+    if session.get('user_id') is None or session.get('role') != 'admin':
+        return redirect('/user_login') 
+    
     conn = get_db()
 
     if request.method == "POST":
@@ -1294,6 +1348,9 @@ def admin_announcement_add():
 
 @app.route("/admin_announcement_view")
 def admin_announcement_view():
+    if session.get('user_id') is None or session.get('role') != 'admin':
+        return redirect('/user_login')
+    
     announcement_id = request.args.get("announcement_id", "")
     conn = get_db()
     row = conn.execute("""
@@ -1312,6 +1369,9 @@ def admin_announcement_view():
 
 @app.route("/admin_announcement_delete", methods=["POST"])
 def admin_announcement_delete():
+    if session.get('user_id') is None or session.get('role') != 'admin':
+        return redirect('/user_login')
+    
     announcement_id = request.form.get("announcement_id", "")
 
     conn = get_db()
@@ -1325,12 +1385,17 @@ def admin_announcement_delete():
 
 @app.route("/admin_profile")
 def admin_profile():
+    if session.get('user_id') is None or session.get('role') != 'admin':
+        return redirect('/user_login')
 
     return render_template("Admin Profile.html")
 
 
 @app.route("/student_dashboard")
 def student_dashboard():
+    if session.get('user_id') is None or session.get('role') != 'student':
+        return redirect('/user_login')
+    
     conn = get_db()
     student_id = session.get('user_id')
 
@@ -1412,6 +1477,9 @@ def student_dashboard():
 
 @app.route("/student_due_payment")
 def student_due_payment():
+    if session.get('user_id') is None or session.get('role') != 'student':
+        return redirect('/user_login')
+    
     check_late_payments(session['user_id'])
 
     month = request.args.get('month','')
@@ -1451,6 +1519,8 @@ def student_due_payment():
 # ==========================
 @app.route('/student_due_payment_rental')
 def student_due_payment_rental():
+    if session.get('user_id') is None or session.get('role') != 'student':
+        return redirect('/user_login')
 
     month = request.args.get('month','')
     year = request.args.get('year','')
@@ -1504,6 +1574,9 @@ def student_due_payment_rental():
 # ==========================
 @app.route('/student_due_payment_summary', methods=['POST'])
 def student_due_payment_summary():
+    if session.get('user_id') is None or session.get('role') != 'student':
+        return redirect('/user_login')
+
     fine_ids = request.form.getlist('fine_ids')
     rental_ids = request.form.getlist('rental_ids')
     late_payment_ids = request.form.getlist('late_payment_ids')
@@ -1512,7 +1585,7 @@ def student_due_payment_summary():
         flash(message='Please select at least one item to pay.', category='danger')
         return redirect(request.referrer)
 
-    conn = get_connection()
+    conn = get_db()
     selected_fines = []
     selected_rentals = []
     selected_late_payments = []
@@ -1568,6 +1641,9 @@ def student_due_payment_summary():
 # ==========================
 @app.route('/student_due_payment_method', methods=['GET', 'POST'])
 def student_due_payment_method():
+    if session.get('user_id') is None or session.get('role') != 'student':
+        return redirect('/user_login')
+    
     if request.method == 'POST':
         payment_method = request.form['payment_method']
 
@@ -1589,6 +1665,9 @@ def student_due_payment_method():
 # ==========================
 @app.route('/student_due_payment_method_online_banking', methods=['GET', 'POST'])
 def student_due_payment_method_online_banking():
+    if session.get('role') != 'student':
+        return redirect('/user_login')
+    
     if 'user_id' not in session:
         flash(message='Your session has expired. Please log in again.', category='danger')
         return redirect('/')
@@ -1616,6 +1695,9 @@ def student_due_payment_method_online_banking():
 
 @app.route("/student_due_payment_method_online_banking_portal", methods=['GET', 'POST'])
 def student_due_payment_method_online_banking_portal():
+    if session.get('role') != 'student':
+        return redirect('/user_login')
+
     if 'user_id' not in session:
         return redirect('/')
 
@@ -1675,6 +1757,9 @@ def student_due_payment_method_online_banking_portal():
 # ==========================
 @app.route('/student_due_payment_method_ewallet', methods=['GET', 'POST'])
 def student_due_payment_method_ewallet():
+    if session.get('role') != 'student':
+        return redirect('/user_login')
+    
     if 'user_id' not in session:
         flash(message='Your session has expired. Please log in again.', category='danger')
         return redirect('/')
@@ -1705,6 +1790,9 @@ def student_due_payment_method_ewallet():
 # ==========================
 @app.route('/student_due_payment_method_ewallet_portal', methods=['GET', 'POST'])
 def student_due_payment_method_ewallet_portal():
+    if session.get('role') != 'student':
+        return redirect('/user_login')
+    
     if 'user_id' not in session:
         return redirect('/')
 
@@ -1759,6 +1847,9 @@ def student_due_payment_method_ewallet_portal():
 # ==========================
 @app.route('/receipt')
 def receipt():
+    if session.get('user_id') is None or session.get('role') != 'student':
+        return redirect('/user_login')
+    
     payment_id = request.args.get('payment_id')
     payment_method = request.args.get('payment_method')
     bank = request.args.get('bank')
@@ -1780,6 +1871,9 @@ def receipt():
 # ==========================
 @app.route('/download_receipt/<int:payment_id>')
 def download_receipt(payment_id):
+    if session.get('user_id') is None or session.get('role') != 'student':
+        return redirect('/user_login')
+    
     conn = get_db()
     payment = conn.execute("SELECT * FROM Payment WHERE payment_id = ?", (payment_id,)).fetchone()
 
@@ -1824,6 +1918,8 @@ def download_receipt(payment_id):
 
 @app.route("/student_announcement")
 def student_announcement():
+    if session.get('user_id') is None or session.get('role') != 'student':
+        return redirect('/user_login')
 
     conn = get_db()
     student_id = session.get('user_id')
@@ -1854,6 +1950,8 @@ def student_announcement():
 
 @app.route("/student_announcement_view")
 def student_announcement_view():
+    if session.get('user_id') is None or session.get('role') != 'student':
+        return redirect('/user_login')
 
     announcement_id = request.args.get("announcement_id", "")
     conn = get_db()
@@ -1873,6 +1971,9 @@ def student_announcement_view():
 
 @app.route("/student_book_room", methods=['GET', 'POST'])
 def student_book_room():
+    if session.get('user_id') is None or session.get('role') != 'student':
+        return redirect('/user_login')
+    
     conn = get_db()
     today = date.today().isoformat()
 
@@ -1923,6 +2024,9 @@ def student_book_room():
 
 @app.route('/student_book_room_confirm', methods=['POST'])
 def student_book_room_confirm():
+    if session.get('user_id') is None or session.get('role') != 'student':
+        return redirect('/user_login')
+    
     room_id = request.form.get('room_id')
     start_date = request.form.get('start_date')
     duration = request.form.get('duration')
@@ -1953,6 +2057,9 @@ def student_book_room_confirm():
 
 @app.route("/student_maintenance")
 def student_maintenance():
+    if session.get('user_id') is None or session.get('role') != 'student':
+        return redirect('/user_login')
+    
     student_id = session['user_id']
 
     conn = get_db()
@@ -1968,6 +2075,9 @@ def student_maintenance():
 
 @app.route("/student_maintenance_add", methods=['GET', 'POST'])
 def student_maintenance_add():
+    if session.get('user_id') is None or session.get('role') != 'student':
+        return redirect('/user_login')
+    
     categories = [
         'Electrical',
         'Plumbing',
@@ -2023,12 +2133,17 @@ def student_maintenance_add():
 
 @app.route("/student_profile")
 def student_profile():
+    if session.get('user_id') is None or session.get('role') != 'student':
+        return redirect('/user_login')
 
     return render_template("Student Profile.html")
 
 
 @app.route("/warden_dashboard")
 def warden_dashboard():
+    if session.get('user_id') is None or session.get('role') != 'warden':
+        return redirect('/user_login')
+    
     conn = get_db()
     total_request = conn.execute("""
     SELECT COUNT(*) FROM Maintenance
@@ -2067,6 +2182,9 @@ def warden_dashboard():
 
 @app.route("/warden_student_list")
 def warden_student_list():
+    if session.get('user_id') is None or session.get('role') != 'warden':
+        return redirect('/user_login')
+    
     conn = get_db()
     search_data = request.args.get("search_data", "")
 
@@ -2087,6 +2205,9 @@ def warden_student_list():
 
 @app.route("/warden_maintenance")
 def warden_maintenance():
+    if session.get('user_id') is None or session.get('role') != 'warden':
+        return redirect('/user_login')
+    
     conn = get_db()
     issues = conn.execute("""
         SELECT request_id, student_id, room_id, category, description, created_at, status
@@ -2101,6 +2222,8 @@ def warden_maintenance():
 # ================= UPDATE STATUS (WARDEN) =================
 @app.route('/update_status/<int:id>', methods=['POST'])
 def update_status(id):
+    if session.get('user_id') is None or session.get('role') != 'warden':
+        return redirect('/user_login')
 
     status = request.form.get('status')
 
@@ -2123,6 +2246,9 @@ def update_status(id):
 
 @app.route("/warden_announcement")
 def warden_announcement():
+    if session.get('user_id') is None or session.get('role') != 'warden':
+        return redirect('/user_login')
+    
     conn = get_db()
 
     search_date = request.args.get("search_date", "")
@@ -2157,6 +2283,9 @@ def warden_announcement():
 
 @app.route("/warden_announcement_add", methods=["GET", "POST"])
 def warden_announcement_add():
+    if session.get('user_id') is None or session.get('role') != 'warden':
+        return redirect('/user_login')
+    
     conn = get_db()
 
     if request.method == "POST":
@@ -2198,6 +2327,9 @@ def warden_announcement_add():
 
 @app.route("/warden_announcement_view")
 def warden_announcement_view():
+    if session.get('user_id') is None or session.get('role') != 'warden':
+        return redirect('/user_login')
+    
     announcement_id = request.args.get("announcement_id", "")
     conn = get_db()
     row = conn.execute("""
@@ -2216,6 +2348,9 @@ def warden_announcement_view():
 
 @app.route("/warden_announcement_delete", methods=["POST"])
 def warden_announcement_delete():
+    if session.get('user_id') is None or session.get('role') != 'warden':
+        return redirect('/user_login')
+    
     announcement_id = request.form.get("announcement_id", "")
 
     conn = get_db()
@@ -2229,6 +2364,9 @@ def warden_announcement_delete():
 
 @app.route("/warden_due_payment")
 def warden_due_payment():
+    if session.get('user_id') is None or session.get('role') != 'warden':
+        return redirect('/user_login')
+    
     conn = get_db()
     search_data = request.args.get("search_data","")
 
@@ -2269,8 +2407,8 @@ def warden_due_payment():
 
 @app.route('/warden_fines', methods=['GET', 'POST'])
 def warden_fines():
-    if session.get('role') != 'warden':
-        return redirect('/')
+    if session.get('user_id') is None or session.get('role') != 'warden':
+        return redirect('/user_login')
 
     # GET
     search = request.args.get('search', '')
@@ -2297,8 +2435,8 @@ def warden_fines():
 
 @app.route('/warden_fines_add', methods=['GET', 'POST'])
 def warden_fines_add():
-    if session.get('role') != 'warden':
-        return redirect('/')
+    if session.get('user_id') is None or session.get('role') != 'warden':
+        return redirect('/user_login')
 
     if request.method == 'POST':
         student_id = request.form['student_id']
@@ -2335,7 +2473,9 @@ def warden_fines_add():
 
 @app.route("/warden_profile")
 def warden_profile():
-
+    if session.get('user_id') is None or session.get('role') != 'warden':
+        return redirect('/user_login')
+    
     return render_template("Warden Profile.html")
 
 
