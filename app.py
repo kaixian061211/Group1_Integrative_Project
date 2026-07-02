@@ -415,7 +415,6 @@ def _clear_payment_session():
         session.pop(key, None)
 
 
-
 # ==========================
 # HOME
 # ==========================
@@ -1983,6 +1982,8 @@ def student_book_room():
     total_fee = None
     rooms = []
 
+    student_gender = session.get('gender')
+
     if request.method == 'POST':
         form = {
             'start_date': request.form.get('start_date', '').strip(),
@@ -1996,17 +1997,30 @@ def student_book_room():
                 (form['start_date'], form['duration'])
             ).fetchone()[0]
 
-            rooms = conn.execute("""
+            room_rows = conn.execute("""
                 SELECT r.*,
                        COUNT(DISTINCT rb.student_id) AS occupancy,
-                       COUNT(DISTINCT rb.student_id) >= r.capacity AS is_full
+                       COUNT(DISTINCT rb.student_id) >= r.capacity AS is_full,
+                       SUM(CASE WHEN s.gender IS NOT NULL AND s.gender != ? THEN 1 ELSE 0 END) > 0 AS is_gender_blocked,
+                       MAX(CASE WHEN s.gender IS NOT NULL AND s.gender != ? THEN s.gender END) AS conflicting_gender
                 FROM Room r
                 LEFT JOIN Rental_Bill rb
                     ON r.room_id = rb.room_id
-                    AND rb.start_date <= :end
-                    AND rb.end_date   >= :start
+                    AND rb.start_date <= ?
+                    AND rb.end_date >= ?
+                LEFT JOIN Student s ON s.student_id = rb.student_id
                 GROUP BY r.room_id
-            """, {'start': form['start_date'], 'end': end_date}).fetchall()
+            """, (student_gender, student_gender, end_date, form['start_date'])).fetchall()
+
+            rooms = []
+            for room in room_rows:
+                room_data = dict(room)
+                room_data['gender_block_message'] = None
+                if room_data['is_gender_blocked']:
+                    room_data['gender_block_message'] = (
+                        f"Reserved for {room_data['conflicting_gender']} students during this period"
+                    )
+                rooms.append(room_data)
 
             if form['room_id']:
                 selected_room = next((r for r in rooms if r['room_id'] == form['room_id']), None)
@@ -2040,6 +2054,32 @@ def student_book_room_confirm():
 
     if room is None:
         flash('Room not found.', 'danger')
+        return redirect(url_for('student_book_room'))
+
+    student_gender = session.get('gender')
+    conflict_row = conn.execute("""
+        SELECT
+            COUNT(DISTINCT rb.student_id) AS occupancy,
+            SUM(CASE WHEN s.gender IS NOT NULL AND s.gender != ? THEN 1 ELSE 0 END) > 0 AS is_gender_blocked,
+            MAX(CASE WHEN s.gender IS NOT NULL AND s.gender != ? THEN s.gender END) AS conflicting_gender
+        FROM Rental_Bill rb
+        LEFT JOIN Student s ON s.student_id = rb.student_id
+        WHERE rb.room_id = ?
+          AND rb.start_date <= ?
+          AND rb.end_date >= ?
+    """, (student_gender, student_gender, room_id, end_date, start_date)).fetchone()
+
+    if conflict_row['is_gender_blocked']:
+        flash(
+            f"Sorry, this room is currently reserved for {conflict_row['conflicting_gender']} students during your selected period.",
+            'danger'
+        )
+        return redirect(url_for('student_book_room'))
+
+    occupancy = conflict_row['occupancy']
+
+    if occupancy >= room['capacity']:
+        flash('This room is fully occupied during your selected period.', 'danger')
         return redirect(url_for('student_book_room'))
 
     total_fee = room['fee_per_month'] * int(duration)

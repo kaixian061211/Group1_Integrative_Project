@@ -97,11 +97,12 @@
                                 </option>
                                 {% for room in rooms %}
                                 <option value="{{ room['room_id'] }}"
-                                        {% if room['is_full'] %}disabled{% endif %}
+                                        {% if room['is_full'] or room['is_gender_blocked'] %}disabled{% endif %}
                                 {% if form and form.room_id == room['room_id'] %}selected{% endif %}>
                                 {{ room['room_id'] }} — {{ room['room_type'] | capitalize }}
                                 (RM {{ "%.2f"|format(room['fee_per_month']) }}/month)
                                 {% if room['is_full'] %} [Full]{% endif %}
+                                {% if room['is_gender_blocked'] %} [Gender Restricted]{% endif %}
                                 </option>
                                 {% endfor %}
                             </select>
@@ -170,7 +171,15 @@
                                     </tbody>
                                 </table>
 
-                                {% if not selected_room['is_full'] %}
+                                {% if selected_room['is_full'] or selected_room['is_gender_blocked'] %}
+                                <button class="btn btn-secondary" disabled>
+                                    {% if selected_room['is_full'] %}
+                                    Room Fully Occupied During This Period
+                                    {% elif selected_room['is_gender_blocked'] %}
+                                    {{ selected_room['gender_block_message'] }}
+                                    {% endif %}
+                                </button>
+                                {% else %}
                                 <form method="POST" action="/student_book_room_confirm">
                                     <input type="hidden" name="room_id" value="{{ selected_room['room_id'] }}">
                                     <input type="hidden" name="start_date" value="{{ form.start_date }}">
@@ -178,8 +187,6 @@
                                     <input type="hidden" name="end_date" value="{{ end_date }}">
                                     <button type="submit" class="btn btn-dark">Confirm Booking</button>
                                 </form>
-                                {% else %}
-                                <button class="btn btn-secondary" disabled>Room Fully Occupied During This Period</button>
                                 {% endif %}
                             </div>
 
