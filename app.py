@@ -9,6 +9,7 @@ import io
 from reportlab.pdfgen import canvas
 import sqlite3
 
+print("hello")
 
 app = Flask(__name__)
 app.secret_key = "admin123"
