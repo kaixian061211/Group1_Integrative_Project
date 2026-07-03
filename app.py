@@ -14,6 +14,7 @@ app = Flask(__name__)
 app.secret_key = "admin123"
 DATABASE = "hostel.db"
 
+print("Flask app initialized with secret key and database path.")
 
 # ==========================
 # MAIL CONFIGURATION
