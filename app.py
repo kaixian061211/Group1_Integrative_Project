@@ -22,7 +22,7 @@ app.config['MAIL_SERVER']         = 'smtp.gmail.com'
 app.config['MAIL_PORT']           = 587
 app.config['MAIL_USE_TLS']        = True
 app.config['MAIL_USERNAME']       = 'p24016577@student.newinti.edu.my'
-app.config['MAIL_PASSWORD']       = 'fqzr qrbj gnlx ssgm'
+app.config['MAIL_PASSWORD']       = 'ckwy vysc rool iejs'
 app.config['MAIL_DEFAULT_SENDER'] = 'p24016577@student.newinti.edu.my'
 
 mail = Mail(app)
@@ -88,7 +88,7 @@ def inject_unread_status():
 # ==========================
 def generate_reset_token(email):
     s = URLSafeTimedSerializer(app.secret_key)
-    return s.dumps(email, salt="password-reset-salt")
+    return s.dumps(email, salt="password-reset-salt") #email, timestamp, and salt are combined to create a unique token
 
 def verify_reset_token(token, max_age=1800):
     s = URLSafeTimedSerializer(app.secret_key)
