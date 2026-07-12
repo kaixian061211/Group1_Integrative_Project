@@ -7,5 +7,3 @@ How to Set Up:
 3) Run test.py to reset test data
 4) Run app.py to run web application
 
-testing branch
-i am just testing
